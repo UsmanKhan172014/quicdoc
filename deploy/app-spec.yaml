@@ -1,0 +1,62 @@
+
+databases:
+- engine: PG
+  name: quicdoc-db
+  num_nodes: 1
+  size: db-s-dev-database
+  version: "12"
+- cluster_name: quicdoc-redis
+  engine: REDIS
+  name: quicdoc-redis
+  production: true
+  version: "7"
+name: quicdoc
+region: nyc
+services:
+- dockerfile_path: Dockerfile.web
+  envs:
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    value: ${quicdoc-db.DATABASE_URL}
+  - key: DJANGO_SETTINGS_MODULE
+    scope: RUN_AND_BUILD_TIME
+    value: quicdoc.settings_production
+  - key: SECRET_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: 'wabUMLFAsGUanKckBSxnrvmvvxwrenZeMtZmKyrCtNSHHSFhDsvztBEWPnBX'
+  - key: REDIS_URL
+    scope: RUN_TIME
+    value: ${quicdoc-redis.DATABASE_URL}
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: user/quicdoc
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  name: quicdoc-web
+  routes:
+  - path: /
+workers:
+- dockerfile_path: Dockerfile.web
+  envs:
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    value: ${quicdoc-db.DATABASE_URL}
+  - key: DJANGO_SETTINGS_MODULE
+    scope: RUN_AND_BUILD_TIME
+    value: quicdoc.settings_production
+  - key: SECRET_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: 'wabUMLFAsGUanKckBSxnrvmvvxwrenZeMtZmKyrCtNSHHSFhDsvztBEWPnBX'
+  - key: REDIS_URL
+    scope: RUN_TIME
+    value: ${quicdoc-redis.DATABASE_URL}
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: user/quicdoc
+  instance_count: 1
+  instance_size_slug: basic-xs
+  name: quicdoc-celery
+  run_command: celery -A quicdoc worker -l INFO --pool=gevent --concurrency 2
