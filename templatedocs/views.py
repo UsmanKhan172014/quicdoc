@@ -32,7 +32,7 @@ def index(request):
 def delete(request, id):
     data = UploadFileForm.objects.get(id=id)
     data.delete()
-    return HttpResponseRedirect('/templatedocs/get_all/')
+    return HttpResponseRedirect('/templatedocs/home/')
 
 
 def update_doc_form(request, id):
