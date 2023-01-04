@@ -40,6 +40,7 @@ team_urlpatterns = [
     path('example/', include('apps.teams_example.urls')),
 ]
 
+
 urlpatterns = [
     # redirect Django admin login to main login page
     path('admin/login/', RedirectView.as_view(pattern_name='account_login')),
@@ -68,4 +69,7 @@ urlpatterns = [
     path("stripe/", include("djstripe.urls", namespace="djstripe")),
     # hijack urls for impersonation
     path('hijack/', include('hijack.urls', namespace='hijack')),
+
+    # my custom code
+    path('templatedocs/', include('templatedocs.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

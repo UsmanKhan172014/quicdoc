@@ -48,6 +48,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.forms',
+    'templatedocs'
 ]
 
 # Put your third-party apps here

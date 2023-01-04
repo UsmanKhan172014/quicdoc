@@ -171,3 +171,5 @@ whitenoise[brotli]==6.2.0
     # via -r requirements/requirements.in
 wrapt==1.14.1
     # via deprecated
+python-docx==0.8.11
+    # via -r requirements/requirements.in

@@ -16,3 +16,4 @@ celery
 celery[redis]
 sentry-sdk
 whitenoise[brotli]
+python-docx
