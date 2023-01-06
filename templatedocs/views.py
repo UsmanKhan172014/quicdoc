@@ -66,16 +66,23 @@ def update(request, id):
             for para in doc.paragraphs:
                 placeholders = re.findall(r"\{.*\}", para.text)
                 for placeholder in placeholders:
-                    para.text = para.text.replace(placeholder, request.POST[placeholder])
-
-            for table in doc.tables:
-                for row in table.rows:
-                    for cell in row.cells:
-                        for para in cell.paragraphs:
-                            placeholders = re.findall(r"\{.*\}", para.text)
-                            for placeholder in placeholders:
-                                para.text = para.text.replace(placeholder, request.POST[placeholder])
-
+                    style1 = doc.styles['heading 1']
+                    style2 = doc.styles['heading 2']
+                    default_color = style2.font.color.rgb
+                    if str(default_color) == 'FFFFFF':
+                        para.text = para.text.replace(placeholder, request.POST[placeholder])
+                        para.style.font.color.rgb = style1.font.color.rgb
+                    else:
+                        para.text = para.text.replace(placeholder, request.POST[placeholder])
+                for table in doc.tables:
+                    for row in table.rows:
+                        for cell in row.cells:
+                            for para in cell.paragraphs:
+                                placeholders = re.findall(r"\{.*\}", para.text)
+                                for placeholder in placeholders:
+                                    style = para.style
+                                    para.text = para.text.replace(placeholder, request.POST[placeholder])
+                                    para.style = style
             doc.save(base_path + "/media/" + str(data.file))
             response = FileResponse(open(base_path + "/media/" + str(data.file), 'rb'),
                                     content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
@@ -83,4 +90,4 @@ def update(request, id):
             return response
         except Exception as e:
             print(e)
-            return HttpResponse("Error")
+            return HttpResponse(e)
