@@ -83,10 +83,9 @@ def update(request, id):
                                     style = para.style
                                     para.text = para.text.replace(placeholder, request.POST[placeholder])
                                     para.style = style
-            doc.save(base_path + "/media/" + str(data.file))
-            response = FileResponse(open(base_path + "/media/" + str(data.file), 'rb'),
+            doc.save(base_path + "/media/documents/updated.docx")
+            response = FileResponse(open(base_path + "/media/documents/updated.docx", 'rb'),
                                     content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-            response['Content-Disposition'] = 'attachment; filename="Hello.docx"'
             return response
         except Exception as e:
             print(e)
