@@ -173,3 +173,5 @@ wrapt==1.14.1
     # via deprecated
 python-docx==0.8.11
     # via -r requirements/requirements.in
+python-pptx==0.6.21
+    # via -r requirements/requirements.in
