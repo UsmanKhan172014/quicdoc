@@ -1,0 +1,26 @@
+<div class="auth-nav-alt">
+    <div class="start is-hidden-mobile">
+        <a href="{% url 'web:home' %}">Home</a>
+    </div>
+    <div class="end">
+
+        {% if 'login' in request.path %}
+            <span class="muted-text pr-10">Don't have an account?</span>
+            <a href="/accounts/signup" class="button is-rounded btn-align">Sign Up</a>
+        {% elif 'signup' in request.path %}
+            <span class="muted-text pr-10">Already have an account?</span>
+            <a href="/accounts/login" class="button is-rounded btn-align">Login</a>
+        {% endif %}
+
+    </div>
+</div>
+
+
+{% if messages %}
+    <div class="notification is-success">
+        <button class="delete"></button>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}

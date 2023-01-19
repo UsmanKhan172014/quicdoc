@@ -1,53 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>All Documents</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-</head>
-<body>
-<div class="container">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h1>My First Bootstrap Page</h1>
-            <p>This is some text.</p>
+{% extends "dashboard/layout/admin_base.html" %}
+{% load static %}
+{% block admin %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="h2" style="color: #444f60 !important"><Strong>User Templates</Strong></h2>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <a class="btn btn-primary float-right mb-4" href="{% url 'upload_file' %}">Upload template</a>
+        <div class="row">
+            <div class="col-12">
+                <a class="btn btn-primary rounded-pill float-right mb-4" href="{% url 'upload_file' %}">Upload
+                    template</a>
+            </div>
         </div>
-    </div>
-    <row>
-        <div class="col-12">
-            <table class="table ">
-                <tr>
-                    <th>Name</th>
-                    <th>description</th>
-                    <th>Document</th>
-                    <th>updated_at</th>
-                    <th>Actions</th>
-                </tr>
-                {% for item in data %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.description }}</td>
-                        <td>{{ item.file }}</td>
-                        <td>{{ item.uploaded_at }}</td>
-                        <td>
-                            {#                            <a class="btn btn-primary" href="{{ item.file.url }}">Download</a>#}
-                            <a class="btn btn-primary" href="{% url 'updateDoc' item.id %}">Edit</a>
-                            <a class="btn btn-danger" href="{% url 'delete' item.id %}">delete</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </row>
-    {#    show all data  in table #}
+        <row>
+            <div class="col-12">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                            <tr>
+                                <th class="text-uppercase text-sm text-secondary">Name
+                                </th>
+                                <th class="text-uppercase text-sm text-secondary">
+                                    description
+                                </th>
+                                <th class="text-uppercase text-sm text-secondary">
+                                    Type
+                                </th>
+                                <th class="text-uppercase text-sm text-secondary">
+                                    updated_at
+                                </th>
+                                <th class="text-uppercase text-center text-sm text-secondary">
+                                    Actions
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in data %}
+                                <tr>
+                                    <td>
+                                        <div class="px-2 py-1 mt-2">
+                                            {{ item.name }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-1 mt-2">
+                                            {{ item.description }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-1">
+                                            {# convert item.file to string and then compare if it contains .docx or not #}
+                                            {% if ".docx" in item.file|stringformat:"s" %}
+                                                <a href="#" class="btn text-white mt-2" style="background-color: #2b579a; width: 120px">Word</a>
+                                            {% else %}
+                                                <a href="#" class="btn text-white mt-2" style="background-color: #b7472a;width: 120px">PowerPoint</a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="px-2 py-1 mt-2">
+                                            {{ item.uploaded_at }}
+                                        </div>
+                                    </td>
+
+                                    <td class="text-center">
+                                        {#                            <a class="btn btn-primary" href="{{ item.file.url }}">Download</a>#}
+                                        <a class="btn btn-primary rounded-pill text-white mt-2"
+                                           href="{% url 'updateDoc' item.id %}">Create</a>
+                                        <a class="btn btn-danger rounded-pill text-white mt-2"
+                                           href="{% url 'delete' item.id %}">Delete</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </row>
+        {#    show all data  in table #}
 
 
-</div>
-</body>
-</html>
+    </div>
+{% endblock %}

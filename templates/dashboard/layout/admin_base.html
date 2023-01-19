@@ -1,0 +1,76 @@
+{% load static %}
+{% load meta_tags %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
+    {% if project_meta %}
+        {% with project_meta|get_title:page_title as title %}
+            {% with project_meta|get_description:page_description as description %}
+                {% with project_meta|get_image_url:page_image as image %}
+                    <title>{% block page_title %}{{ title }}{% endblock %}</title>
+                    <meta name="description" content="{{ description }}">
+                    <meta name="keywords" content="{{ project_meta.KEYWORDS }}">
+                    <!-- Twitter Card data -->
+                    <meta name="twitter:card" content="summary">
+                    <meta name="twitter:title" content="{{ title }}">
+                    <meta name="twitter:description" content="{{ description }}">
+                    <meta name="twitter:image" content="{{ image }}">
+                    <!-- Open Graph data -->
+                    <meta property="og:title" content="{{ title }}"/>
+                    <meta property="og:type" content="website"/>
+                    <meta property="og:url" content="{{ page_url }}"/>
+                    <meta property="og:image" content="{{ image }}"/>
+                    <meta property="og:description" content="{{ description }}"/>
+                    <meta property="og:site_name" content="{{ project_meta.NAME }}"/>
+                    <link rel="canonical"
+                          href="{% if page_canonical_url %}{{ page_canonical_url }}{% else %}{{ page_url }}{% endif %}">
+                {% endwith %}
+            {% endwith %}
+        {% endwith %}
+    {% endif %}
+    <link rel="manifest" href="{% static 'admin/assets/favicon/manifest.json' %}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{% static 'admin/assets/favicon/ms-icon-144x144.png' %}">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Vendors styles-->
+    <link rel="stylesheet" href="{% static 'admin/vendors/simplebar/css/simplebar.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/vendors/simplebar.css' %}">
+    <!-- Main styles for this application-->
+    <link href="{% static 'admin/css/style.css' %}" rel="stylesheet">
+    <!-- We use those styles to show code examples, you should remove them in your application.-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.css">
+    <link href="{% static 'admin/css/examples.css' %}" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("{% static 'assets/img/graphics/legacy/wavy-4-core.svg' %}") !important;
+            background-repeat: no-repeat !important;
+            background-size: cover !important;
+        }
+    </style>
+</head>
+<body>
+
+
+{% block sidebar %}
+    {% include 'dashboard/components/sidebar.html' %}
+{% endblock %}
+<div class="wrapper d-flex flex-column min-vh-100">
+    {% block header %}
+        {% include 'dashboard/components/top_nav.html' %}
+    {% endblock %}
+    {% block admin %}
+
+    {% endblock %}
+</div>
+
+{% block extrascripts %}
+    {% include 'dashboard/components/extra_scripts.html' %}
+{% endblock %}
+</body>
+</html>
+
+

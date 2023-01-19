@@ -1,63 +1,106 @@
-{% extends "web/base.html" %}
+{% extends "frontend/layout/web.html" %}
 {% load i18n %}
 {% load static %}
 {% load socialaccount %}
 {% load form_tags %}
-{% block body %}
-<main class="main-content  mt-0 bg-white">
-  <section>
-    <div class="page-header min-vh-100">
-      <div class="container">
-        <div class="row">
-          <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
-            <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('https://github.com/creativetimofficial/material-dashboard/blob/master/assets/img/illustrations/illustration-signup.jpg?raw=true'); background-size: cover;">
+{% block content %}
+
+    {% include 'frontend/components/preloader.html' %}
+    {% include 'frontend/components/auth_nav.html' %}
+
+    <div class="auth-outer-alt">
+        <div class="columns">
+            <div class="column">
+                <div class="form-wrapper">
+                    <div class="form-title">
+                        <h3>Register</h3>
+                        {#                        <h4>We're super happy to see you again! Let's log you in.</h4>#}
+                    </div>
+                    <form method="post" role="form">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <article class="message is-danger">
+                                <div class="message-body">
+                                    {{ form.non_field_errors }}
+                                </div>
+                            </article>
+
+                        {% endif %}
+
+                        <div class="form-inner">
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <input type="email" name="email" autocomplete="email"
+                                           class="input is-rounded is-primary-focus"
+                                           placeholder="Email address"/>
+                                    <div class="icon is-nedium is-left">
+                                        <i class="sl sl-icon-envelope-open"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if form.email.errors %}
+                                <article class="message is-danger">
+                                    <div class="message-body">
+                                        {{ form.email.errors }}
+                                    </div>
+                                </article>
+                            {% endif %}
+
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <input type="password" name="password1" class="input is-rounded is-primary-focus"
+                                           placeholder="Password" autocomplete="current-password"/>
+                                    <div class="icon is-nedium is-left">
+                                        <i class="sl sl-icon-lock"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if form.password1.errors %}
+                                <article class="message is-danger">
+                                    <div class="message-body">
+                                        {{ form.password1.errors }}
+                                    </div>
+                                </article>
+                            {% endif %}
+
+
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <input type="text" name="team_name" class="input is-rounded is-primary-focus"
+                                           placeholder="Team Name (Optional)" autocomplete="team_name"/>
+                                    <div class="icon is-nedium is-left">
+                                        <i class="sl sl-icon-lock"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if form.team_name.errors %}
+                                <article class="message is-danger">
+                                    <div class="message-body">
+                                        {{ form.team_name.errors }}
+                                    </div>
+                                </article>
+                            {% endif %}
+
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <input class="button is-fullwidth is-rounded primary-btn raised" type="submit"
+                                           value="{% translate 'Sign In' %}">
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+
+                </div>
+
+
             </div>
-          </div>
-          <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
-            <div class="card card-plain mt-6">
-              <div class="card-header">
-                <h4 class="font-weight-bolder">{% translate "Sign Up" %}</h4>
-                <p class="mb-0">{% translate "Enter your email and password to register" %}</p>
-              </div>
-              <div class="card-body">
-                <form method="post" role="form">
-                  {% csrf_token %}
-                  {{ form.non_field_errors }}
-                  {% render_text_input form.email %}
-                  {% render_text_input form.password1 %}
-                  {% if project_settings.ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE %}
-                    {% render_text_input form.password2 %}
-                  {% endif %}
-                  {% if request.GET.invitation_id %}
-                    <input type="hidden" name="invitation_id" value="{{ request.GET.invitation_id }}">
-                    {{ form.invitation_id.errors }}
-                  {% else %}
-                    {% render_text_input form.team_name %}
-                  {% endif %}
-                  <div class="form-check form-check-info text-start ps-0">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
-                    <label class="form-check-label" for="flexCheckDefault">
-                      I agree the <a href="{% url 'web:terms' %}" target="_blank" class="text-dark font-weight-bolder">{% translate "Terms and Conditions" %}</a>
-                    </label>
-                  </div>
-                  <input class="btn btn-primary w-100" type="submit" value="{% translate "Sign Up" %}">
-                  <p class="text-center mt-2">{% translate "or" %}</p>
-                  {% include 'account/components/social/login_with_google_button.html' %}
-                </form>
-              </div>
-              <hr>
-              <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                <p class="mb-2 text-sm mx-auto">
-                  {% translate "Already have an account?" %}
-                  <a href="{% url 'account_login' %}" class="text-primary text-gradient font-weight-bold">{% translate "Sign In" %}</a>
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </section>
-</main>
 {% endblock %}
 {% block footer %}{% endblock %}
