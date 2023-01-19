@@ -21,13 +21,14 @@ def render_field(form_field):
 
 @register.simple_tag
 def render_text_input(form_field):
-    TEXT_INPUT_TEMPLATE = """<div class="mb-3 input-group input-group-static">
+    TEXT_INPUT_TEMPLATE = """<div class="mb-3 form-group ">
       <label for="{{ form_field.id_for_label }}">{{ form_field.label }}</label>
       {{ form_field }}
       <small class="form-text text-muted">{{ form_field.help_text|safe }}</small>
       {{ form_field.errors }}
     </div>
     """
+
     return _render_field(TEXT_INPUT_TEMPLATE, form_field)
 
 
@@ -40,6 +41,7 @@ def render_select_input(form_field):
       {{ form_field.errors }}
     </div>
     """
+
     return _render_field(SELECT_INPUT_TEMPLATE, form_field)
 
 
