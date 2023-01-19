@@ -141,10 +141,10 @@ def update(request, id):
                             for placeholder in placeholders:
                                 print(placeholder)
                                 paragraph.text = paragraph.text.replace(placeholder, request.POST[placeholder])
-                prs.save(base_path + "/media/" + str(data.file))
-                response = FileResponse(open(base_path + "/media/" + str(data.file), 'rb'),
+                prs.save(base_path + "/media/documents/updated.pptx")
+                response = FileResponse(open(base_path + "/media/documents/updated.pptx", 'rb'),
                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
-                response['Content-Disposition'] = 'attachment; filename="Hello.pptx"'
+                response['Content-Disposition'] = 'attachment; filename="updated.pptx"'
                 return response
                 # return HttpResponse("Success")
             except Exception as e:
