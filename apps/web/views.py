@@ -19,7 +19,7 @@ def home(request):
             ))
             return HttpResponseRedirect(reverse('teams:manage_teams'))
     else:
-        return render(request, 'web/landing_page.html')
+        return render(request, 'frontend/index.html')
 
 
 @login_and_team_required
