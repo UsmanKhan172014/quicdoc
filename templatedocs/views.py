@@ -36,7 +36,7 @@ def get_all(request):
     return render(request, 'templatedocs/index.html', {
         'data': data,
         'active_tab': 'get_all',
-                                                       })
+    })
 
 
 # delete function
@@ -139,8 +139,12 @@ def update(request, id):
                         for paragraph in shape.text_frame.paragraphs:
                             placeholders = re.findall(r"\{.*\}", paragraph.text)
                             for placeholder in placeholders:
-                                print(placeholder)
-                                paragraph.text = paragraph.text.replace(placeholder, request.POST[placeholder])
+                                for run in paragraph.runs:
+                                    font_name = run.font.name
+                                    font_size = run.font.size
+                                    paragraph.text = paragraph.text.replace(placeholder, request.POST[placeholder])
+                                    paragraph.runs[0].font.name = font_name
+                                    paragraph.runs[0].font.size = font_size
                 new_name = str(data.file).replace(".pptx", "_updated.pptx")
                 prs.save(base_path + "/media/documents/updated.pptx")
                 response = FileResponse(open(base_path + "/media/documents/updated.pptx", 'rb'),
@@ -155,6 +159,7 @@ def update(request, id):
             return HttpResponse("File not supported")
     else:
         return HttpResponseRedirect('/templatedocs/get_all/')
+
 
 def load_admin(request):
     return render(request, 'dashboard/index.html');
