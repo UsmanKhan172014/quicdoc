@@ -120,11 +120,11 @@ def update(request, id):
                                     style = para.style
                                     para.text = para.text.replace(placeholder, request.POST[placeholder])
                                     para.style = style
-
+                new_name = str(data.file).replace(".docx", "_updated.docx")
                 doc.save(base_path + "/media/documents/updated.docx")
                 response = FileResponse(open(base_path + "/media/documents/updated.docx", 'rb'),
                                         content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-                response['Content-Disposition'] = 'attachment; filename="Hello.docx"'
+                response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_name)
                 return response
             except Exception as e:
                 print(e)
@@ -141,10 +141,11 @@ def update(request, id):
                             for placeholder in placeholders:
                                 print(placeholder)
                                 paragraph.text = paragraph.text.replace(placeholder, request.POST[placeholder])
+                new_name = str(data.file).replace(".pptx", "_updated.pptx")
                 prs.save(base_path + "/media/documents/updated.pptx")
                 response = FileResponse(open(base_path + "/media/documents/updated.pptx", 'rb'),
                                         content_type='application/vnd.openxmlformats-officedocument.presentationml.presentation')
-                response['Content-Disposition'] = 'attachment; filename="updated.pptx"'
+                response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_name)
                 return response
                 # return HttpResponse("Success")
             except Exception as e:
