@@ -1,5 +1,7 @@
 from django.db import models
 
+import apps.users.models
+
 
 class UploadFileForm(models.Model):
     name = models.CharField(max_length=100)

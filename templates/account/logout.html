@@ -1,26 +1,23 @@
-{% extends "web/app/app_base.html" %}
-{% load static %}
+{% extends "frontend/layout/web.html" %}
 {% load i18n %}
-{% block app %}
-<section class="app-card">
-  <h1 class="pg-title">Sign out</h1>
-  <p class="pg-subtitle">{% translate 'Are you sure you want to sign out?' %}</p>
-  <form method="post" action="{% url 'account_logout' %}">
-    {% csrf_token %}
-    {% if redirect_field_value %}
-    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-    {% endif %}
-    <div class="field is-grouped">
-      <div class="control">
-        <input class="pg-button-primary" type="submit" value="{% translate 'Sign Out' %}">
-        <a class="pg-button-secondary" href="{% url 'web:home' %}">
-          <span class="pg-icon">
-            <i class="fa fa-home"></i>
-          </span>
-          <span>{% translate "Home" %}</span>
-        </a>
-      </div>
+{% load static %}
+{% load socialaccount %}
+{% load form_tags %}
+{% block content %}
+    {% include 'frontend/components/preloader.html' %}
+    {% include 'frontend/components/auth_nav.html' %}
+
+    <div class="auth-outer-alt">
+        <div class="columns">
+            <div class="column">
+                <div class="form-wrapper">
+                    <div class="form-title">
+                        <h3>Logged Out Successfully</h3>
+                        <h4>Thank You for using QuicDoc</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </form>
-</section>
 {% endblock %}
+{% block footer %}{% endblock %}

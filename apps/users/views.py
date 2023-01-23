@@ -2,6 +2,7 @@ from allauth_2fa.utils import user_has_valid_totp_device
 from allauth.account.utils import send_email_confirmation
 from allauth.socialaccount.models import SocialAccount
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -95,3 +96,8 @@ def revoke_api_key(request):
         }
     )
     return HttpResponseRedirect(reverse('users:user_profile'))
+
+@login_required
+def logout_user(request):
+    logout(request)
+    return render(request, 'account/logout.html')

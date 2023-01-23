@@ -10,17 +10,22 @@
         {% elif 'signup' in request.path %}
             <span class="muted-text pr-10">Already have an account?</span>
             <a href="/accounts/login" class="button is-rounded btn-align">Login</a>
+        {% else %}
+            <span class="muted-text pr-10">Already have an account?</span>
+            <a href="/accounts/login" class="button is-rounded btn-align">Login</a>
         {% endif %}
 
     </div>
 </div>
 
 
-{% if messages %}
+{% if 'login' in request.path or 'signup' in request.path %}
+    {% if messages %}
     <div class="notification is-success">
         <button class="delete"></button>
         {% for message in messages %}
             {{ message }}
         {% endfor %}
     </div>
+    {% endif %}
 {% endif %}

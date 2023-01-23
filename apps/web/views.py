@@ -19,17 +19,19 @@ def home(request):
             ))
             return HttpResponseRedirect(reverse('teams:manage_teams'))
     else:
+        # return render(request, 'web/landing_page.html')
         return render(request, 'frontend/index.html')
 
 
 @login_and_team_required
 def team_home(request, team_slug):
     assert request.team.slug == team_slug
-    return render(request, 'web/app_home.html', context={
-        'team': request.team,
-        'active_tab': 'dashboard',
-        'page_title': _('%(team)s Dashboard') % {'team': request.team},
-    })
+    # return render(request, 'dashboard/index.html', context={
+    #     'team': request.team,
+    #     'active_tab': 'dashboard',
+    #     'page_title': _('%(team)s Dashboard') % {'team': request.team},
+    # })
+    return HttpResponseRedirect(reverse('get_all'))
 
 
 def simulate_error(request):

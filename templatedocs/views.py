@@ -69,6 +69,7 @@ def updateDoc(request, id):
             for row in table.rows:
                 for cell in row.cells:
                     for para in cell.paragraphs:
+                        # placeholders = re.findall(r"\{.*\}", para.text)
                         placeholders = re.findall(r"\{.*\}", para.text)
                         unique_placeholders.update(placeholders)
 
@@ -137,6 +138,7 @@ def update(request, id):
                         if not shape.has_text_frame:
                             continue
                         for paragraph in shape.text_frame.paragraphs:
+
                             placeholders = re.findall(r"\{.*\}", paragraph.text)
                             for placeholder in placeholders:
                                 for run in paragraph.runs:
@@ -145,6 +147,7 @@ def update(request, id):
                                     paragraph.text = paragraph.text.replace(placeholder, request.POST[placeholder])
                                     paragraph.runs[0].font.name = font_name
                                     paragraph.runs[0].font.size = font_size
+
                 new_name = str(data.file).replace(".pptx", "_updated.pptx")
                 prs.save(base_path + "/media/documents/updated.pptx")
                 response = FileResponse(open(base_path + "/media/documents/updated.pptx", 'rb'),
@@ -159,7 +162,3 @@ def update(request, id):
             return HttpResponse("File not supported")
     else:
         return HttpResponseRedirect('/templatedocs/get_all/')
-
-
-def load_admin(request):
-    return render(request, 'dashboard/index.html');
