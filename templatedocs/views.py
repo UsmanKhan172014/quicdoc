@@ -62,15 +62,16 @@ def updateDoc(request, id):
         doc = docx.Document(data.file)
         unique_placeholders = set()
         for para in doc.paragraphs:
-            placeholders = re.findall(r"\{.*\}", para.text)
+            placeholders = re.findall(r"\{[^}]*\}", para.text)
             unique_placeholders.update(placeholders)
 
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
                     for para in cell.paragraphs:
-                        # placeholders = re.findall(r"\{.*\}", para.text)
-                        placeholders = re.findall(r"\{.*\}", para.text)
+                        # the given condition finds items like {item} and {item1} but cannot find {item1}{item2} as two items
+                        # need code to find multiple items in a single string
+                        placeholders = re.findall(r"\{[^}]*\}", para.text)
                         unique_placeholders.update(placeholders)
 
         unique_placeholders = list(unique_placeholders)
@@ -83,9 +84,11 @@ def updateDoc(request, id):
                 if not shape.has_text_frame:
                     continue
                 for paragraph in shape.text_frame.paragraphs:
-                    placeholders = re.findall(r"\{.*\}", paragraph.text)
+                    placeholders = re.findall(r"\{[^}]*\}", paragraph.text)
+                    # print(placeholders)
                     unique_placeholders.update(placeholders)
         unique_placeholders = list(unique_placeholders)
+        print(unique_placeholders)
         # return HttpResponse(unique_placeholders)
         return render(request, 'templatedocs/updateDoc.html', {'id': id, 'unique_placeholders': unique_placeholders})
     else:
@@ -102,7 +105,7 @@ def update(request, id):
 
             try:
                 for para in doc.paragraphs:
-                    placeholders = re.findall(r"\{.*\}", para.text)
+                    placeholders = re.findall(r"\{[^}]*\}", para.text)
                     for placeholder in placeholders:
                         style1 = doc.styles['heading 1']
                         style2 = doc.styles['heading 2']
@@ -116,7 +119,7 @@ def update(request, id):
                     for row in table.rows:
                         for cell in row.cells:
                             for para in cell.paragraphs:
-                                placeholders = re.findall(r"\{.*\}", para.text)
+                                placeholders = re.findall(r"\{[^}]*\}", para.text)
                                 for placeholder in placeholders:
                                     style = para.style
                                     para.text = para.text.replace(placeholder, request.POST[placeholder])
@@ -139,7 +142,7 @@ def update(request, id):
                             continue
                         for paragraph in shape.text_frame.paragraphs:
 
-                            placeholders = re.findall(r"\{.*\}", paragraph.text)
+                            placeholders = re.findall(r"\{[^}]*\}", paragraph.text)
                             for placeholder in placeholders:
                                 for run in paragraph.runs:
                                     font_name = run.font.name
