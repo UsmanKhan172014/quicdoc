@@ -7,6 +7,16 @@ import os
 import re
 from pptx import Presentation
 from django.contrib.auth.decorators import login_required
+from tika import parser
+
+
+def file_to_placeholders_array(file_path):
+    text = parser.from_file(file_path)
+    text = re.sub(r'\s+', ' ', text['content'])
+    placeholders = re.findall(r"\{[^}]*\}", text)
+    placeholders = list(dict.fromkeys(placeholders))
+    print(placeholders)
+    return placeholders
 
 
 @login_required
@@ -56,43 +66,53 @@ def delete(request, id):
 def updateDoc(request, id):
     data = UploadFileForm.objects.get(id=id)
     # baseurl = request.build_absolute_uri('/')
-    basePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    file = basePath + "/media/" + str(data.file)
-    if ".docx" in file:
-        doc = docx.Document(data.file)
-        unique_placeholders = set()
-        for para in doc.paragraphs:
-            placeholders = re.findall(r"\{[^}]*\}", para.text)
-            unique_placeholders.update(placeholders)
-
-        for table in doc.tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    for para in cell.paragraphs:
-                        # the given condition finds items like {item} and {item1} but cannot find {item1}{item2} as two items
-                        # need code to find multiple items in a single string
-                        placeholders = re.findall(r"\{[^}]*\}", para.text)
-                        unique_placeholders.update(placeholders)
-
-        unique_placeholders = list(unique_placeholders)
-        return render(request, 'templatedocs/updateDoc.html', {'id': id, 'unique_placeholders': unique_placeholders})
-    elif ".pptx" in file:
-        prs = Presentation(file)
-        unique_placeholders = set()
-        for slide in prs.slides:
-            for shape in slide.shapes:
-                if not shape.has_text_frame:
-                    continue
-                for paragraph in shape.text_frame.paragraphs:
-                    placeholders = re.findall(r"\{[^}]*\}", paragraph.text)
-                    # print(placeholders)
-                    unique_placeholders.update(placeholders)
-        unique_placeholders = list(unique_placeholders)
-        print(unique_placeholders)
-        # return HttpResponse(unique_placeholders)
-        return render(request, 'templatedocs/updateDoc.html', {'id': id, 'unique_placeholders': unique_placeholders})
-    else:
-        return HttpResponse("File not supported")
+    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    file = base_path + "/media/" + str(data.file)
+    place_holders = file_to_placeholders_array(file)
+    return render(request, 'templatedocs/updateDoc.html', {'id': id, 'unique_placeholders': place_holders})
+    # if ".docx" in file:
+    #     text_file_path = extract_word_to_text(file)
+    #     print(text_file_path)
+    #     placeholders = get_text_placeholders(text_file_path)
+    #     # print(placeholders)
+    #     return render(request, 'templatedocs/updateDoc.html', {'id': id, 'unique_placeholders': placeholders})
+    #
+    #     doc = docx.Document(data.file)
+    #     unique_placeholders = set()
+    #     for para in doc.paragraphs:
+    #         placeholders = re.findall(r"\{[^}]*\}", para.text)
+    #         unique_placeholders.update(placeholders)
+    #
+    #     for table in doc.tables:
+    #         for row in table.rows:
+    #             for cell in row.cells:
+    #                 for para in cell.paragraphs:
+    #                     # need code to find multiple items in a single string
+    #                     placeholders = re.findall(r"\{[^}]*\}", para.text)
+    #                     unique_placeholders.update(placeholders)
+    #
+    #     # print(unique_placeholders)
+    #     unique_placeholders = list(unique_placeholders)
+    #     # print(unique_placeholders)
+    #     return render(request, 'templatedocs/updateDoc.html', {'id': id, 'unique_placeholders': unique_placeholders})
+    # elif ".pptx" in file:
+    #     prs = Presentation(file)
+    #     unique_placeholders = set()
+    #     for slide in prs.slides:
+    #         for shape in slide.shapes:
+    #             if not shape.has_text_frame:
+    #                 continue
+    #             for paragraph in shape.text_frame.paragraphs:
+    #                 placeholders = re.findall(r"\{[^}]*\}", paragraph.text)
+    #                 print(placeholders)
+    #                 unique_placeholders.update(placeholders)
+    #     print(unique_placeholders)
+    #     unique_placeholders = list(unique_placeholders)
+    #     print(unique_placeholders)
+    #     # return HttpResponse(unique_placeholders)
+    #     return render(request, 'templatedocs/updateDoc.html', {'id': id, 'unique_placeholders': unique_placeholders})
+    # else:
+    #     return HttpResponse("File not supported")
 
 
 @login_required
@@ -104,6 +124,7 @@ def update(request, id):
             doc = docx.Document(data.file)
 
             try:
+                line_count = 1
                 for para in doc.paragraphs:
                     placeholders = re.findall(r"\{[^}]*\}", para.text)
                     for placeholder in placeholders:
@@ -115,6 +136,7 @@ def update(request, id):
                             para.style.font.color.rgb = style1.font.color.rgb
                         else:
                             para.text = para.text.replace(placeholder, request.POST[placeholder])
+                        line_count += 1
                 for table in doc.tables:
                     for row in table.rows:
                         for cell in row.cells:
@@ -136,12 +158,14 @@ def update(request, id):
         elif ".pptx" in data.file.name:
             prs = Presentation(base_path + "/media/" + str(data.file))
             try:
+                slide_number = 1
                 for slide in prs.slides:
+                    shape_number = 1
                     for shape in slide.shapes:
+                        text_frames = 1
                         if not shape.has_text_frame:
                             continue
                         for paragraph in shape.text_frame.paragraphs:
-
                             placeholders = re.findall(r"\{[^}]*\}", paragraph.text)
                             for placeholder in placeholders:
                                 for run in paragraph.runs:
@@ -150,6 +174,12 @@ def update(request, id):
                                     paragraph.text = paragraph.text.replace(placeholder, request.POST[placeholder])
                                     paragraph.runs[0].font.name = font_name
                                     paragraph.runs[0].font.size = font_size
+                                    print("Slide: " + str(slide_number) + " Shape: " + str(
+                                        shape_number) + " Text Frame: " + str(text_frames) + " Paragraph: " + str(
+                                        paragraph.text))
+                            text_frames += 1
+                        shape_number += 1
+                    slide_number += 1
 
                 new_name = str(data.file).replace(".pptx", "_updated.pptx")
                 prs.save(base_path + "/media/documents/updated.pptx")
